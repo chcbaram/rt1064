@@ -19,9 +19,14 @@ extern "C" {
 #include "config/board/peripherals.h"
 
 
+#include "cmsis_os.h"
+
+
 #include "fsl_gpio.h"
 #include "fsl_lpuart.h"
 #include "fsl_semc.h"
+
+
 
 
 #define BOARD_FLASH_SIZE (0x400000U)

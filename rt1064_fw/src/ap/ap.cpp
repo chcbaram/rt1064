@@ -12,20 +12,33 @@
 
 
 
+static void threadEmul(void const *argument);
+
+
+
 void apInit(void)
 {
   hwInit();
 
   cmdifOpen(_DEF_UART1, 57600);
   uartOpen(_DEF_UART2, 57600);
+
+  osThreadDef(threadEmul, threadEmul, _HW_DEF_RTOS_THREAD_PRI_EMUL, 0, _HW_DEF_RTOS_THREAD_MEM_EMUL);
+  if (osThreadCreate(osThread(threadEmul), NULL) != NULL)
+  {
+    logPrintf("threadEmul \t\t: OK\r\n");
+  }
+  else
+  {
+    logPrintf("threadEmul \t\t: Fail\r\n");
+    while(1);
+  }
 }
 
 
 void apMain(void)
 {
   uint32_t pre_time;
-  uint16_t x = 0;
-  uint16_t y = 0;
 
   pre_time = millis();
   while(1)
@@ -41,26 +54,24 @@ void apMain(void)
     while (uartAvailable(_DEF_UART2) > 0)
     {
       uartPrintf(_DEF_UART2, "rx : 0x%X \n", uartRead(_DEF_UART2));
-
-#if 0
-      uint32_t pre_time;
-
-      pre_time = millis();
-      uint8_t *p_buf = (uint8_t *)0x70000000;
-      volatile uint32_t data = 0;
-      for (int i=0; i<4*1024*1024; i++)
-      {
-        data += p_buf[i];
-      }
-      logPrintf("%d ms\n", millis() - pre_time);
-#endif
     }
 
+    osThreadYield();
+  }
+}
 
-    static uint32_t lcd_pre_time;
-    static uint32_t fps_time;
-    static uint32_t fps;
 
+static void threadEmul(void const *argument)
+{
+  uint32_t lcd_pre_time;
+  uint32_t fps_time;
+  uint32_t fps;
+  uint16_t x = 0;
+  uint16_t y = 0;
+
+
+  while(1)
+  {
     if (lcdDrawAvailable() > 0)
     {
       lcdClearBuffer(black);
@@ -88,6 +99,6 @@ void apMain(void)
 
       lcdRequestDraw();
     }
-
+    osThreadYield();
   }
 }
