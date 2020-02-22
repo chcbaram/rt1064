@@ -74,8 +74,8 @@ bool sdInit(void)
   }
   else
   {
-    SD_PowerOffCard(card->host.base, card->usrParam.pwr);
-    SD_HostReset(&(card->host));
+    //SD_PowerOffCard(card->host.base, card->usrParam.pwr);
+    //SD_HostReset(&(card->host));
     SD_PowerOnCard(card->host.base, card->usrParam.pwr);
 
     status = SD_CardInit(card);

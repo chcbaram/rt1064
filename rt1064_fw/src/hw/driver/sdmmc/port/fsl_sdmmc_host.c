@@ -216,7 +216,7 @@ void SDMMCHOST_PowerOnCard(SDMMCHOST_TYPE *base, const sdmmchost_pwr_card_t *pwr
         //SDMMCHOST_ENABLE_SD_POWER(true);
         gpioPinWrite(SD_PIN_PWREN, _DEF_HIGH);
         /* Delay several milliseconds to make card stable. */
-        SDMMCHOST_Delay(500U);
+        SDMMCHOST_Delay(100U);
     }
 }
 
