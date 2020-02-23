@@ -30,6 +30,7 @@ extern "C" {
 #endif
 #endif
 
+
 #define WEAK __attribute__ ((weak))
 #define WEAK_AV __attribute__ ((weak, section(".after_vectors")))
 #define ALIAS(f) __attribute__ ((weak, alias (#f)))
@@ -422,6 +423,7 @@ extern void _vStackTop(void);
 extern void (* const g_pfnVectors[])(void);
 extern void * __Vectors __attribute__ ((alias ("g_pfnVectors")));
 
+
 __attribute__ ((used, section(".isr_vector")))
 void (* const g_pfnVectors[])(void) = {
     // Core Level - CM7
@@ -603,6 +605,9 @@ void (* const g_pfnVectors[])(void) = {
     GPIO6_7_8_9_IRQHandler,           // 173: GPIO6, GPIO7, GPIO8, GPIO9 interrupt
 
 }; /* End of g_pfnVectors */
+
+
+
 
 //*****************************************************************************
 // Functions to carry out the initialization of RW and BSS data sections. These
@@ -1405,6 +1410,8 @@ WEAK void GPIO6_7_8_9_IRQHandler(void)
 }
 
 //*****************************************************************************
+
+
 
 #if defined (DEBUG)
 #pragma GCC pop_options
