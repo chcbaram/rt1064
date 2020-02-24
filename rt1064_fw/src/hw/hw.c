@@ -12,8 +12,29 @@
 
 
 
-__attribute__((aligned(2048))) __attribute__((used, section(".tag"))) const uint8_t boot_name[32] = "RT1064_B/D";
-                               __attribute__((used, section(".tag"))) const uint8_t boot_ver[32]  = "V200223R1";
+
+extern uint32_t __vectors_start__;
+
+
+
+__attribute__((section(".tag"))) const flash_tag_t fw_tag =
+   {
+    // fw info
+    //
+    0xAAAA5555,        // magic_number
+    "V200224R1",       // version_str
+    "RT1064_B/D",      // board_str
+    "Firmware",        // name
+    __DATE__,
+    __TIME__,
+    (uint32_t)&fw_tag,
+    (uint32_t)&__vectors_start__,
+
+
+    // tag info
+    //
+   };
+
 
 
 void hwInit(void)
@@ -32,7 +53,7 @@ void hwInit(void)
   uartOpen(_DEF_UART1, 57600);
 
   logPrintf("\n\n[ Firmware Begin... ]\r\n");
-  logPrintf("Tag Addr   \t\t: 0x%X\r\n", (int)&boot_name[0]);
+  logPrintf("Tag Addr   \t\t: 0x%X\r\n", (int)&fw_tag);
 
   clocksInit();
   sdramInit();

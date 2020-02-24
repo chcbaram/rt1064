@@ -52,6 +52,24 @@ void clocksCmdif(void);
 
 bool clocksInit(void)
 {
+  // For SDRAM 150Mhz
+  //
+  /* Set SEMC_PODF. */
+  CLOCK_SetDiv(kCLOCK_SemcDiv, 3);
+  /* Set Semc alt clock source. */
+  CLOCK_SetMux(kCLOCK_SemcAltMux, 0);
+  /* Set Semc clock source. */
+  CLOCK_SetMux(kCLOCK_SemcMux, 0);
+
+
+  // For FlexSPI2
+  //
+  CLOCK_SetDiv(kCLOCK_Flexspi2Div, 2);
+  /* Set Flexspi2 clock source. */
+  CLOCK_SetMux(kCLOCK_Flexspi2Mux, 1);
+
+
+
   // For PLL3
   //
   /* Init Usb1 pfd0. */
@@ -75,22 +93,6 @@ bool clocksInit(void)
   /* Init System pfd3. */
   CLOCK_InitSysPfd(kCLOCK_Pfd3, 16);
 
-
-  // For FlexSPI2
-  //
-  CLOCK_SetDiv(kCLOCK_Flexspi2Div, 2);
-  /* Set Flexspi2 clock source. */
-  CLOCK_SetMux(kCLOCK_Flexspi2Mux, 1);
-
-
-  // For SDRAM 150Mhz
-  //
-  /* Set SEMC_PODF. */
-  CLOCK_SetDiv(kCLOCK_SemcDiv, 3);
-  /* Set Semc alt clock source. */
-  CLOCK_SetMux(kCLOCK_SemcAltMux, 0);
-  /* Set Semc clock source. */
-  CLOCK_SetMux(kCLOCK_SemcMux, 0);
 
 
 #ifdef _USE_HW_CMDIF
