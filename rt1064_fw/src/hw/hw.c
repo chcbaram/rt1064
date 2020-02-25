@@ -51,7 +51,6 @@ void hwInit(void)
 
   ledInit();
   buttonInit();
-  vcpInit();
   uartInit();
   uartOpen(_DEF_UART1, 57600);
 
@@ -74,4 +73,5 @@ void hwInit(void)
   }
 
   lcdInit();
+  usbdInit();
 }

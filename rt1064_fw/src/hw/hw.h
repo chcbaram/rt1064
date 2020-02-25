@@ -29,6 +29,7 @@ extern "C" {
 #include "sd.h"
 #include "micros.h"
 #include "lcd.h"
+#include "usbd.h"
 
 
 #include "fatfs/fatfs.h"

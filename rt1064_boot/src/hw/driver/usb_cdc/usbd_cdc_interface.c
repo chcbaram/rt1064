@@ -286,6 +286,10 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
         {
             if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
             {
+              if (epCbParam->length > APP_RX_DATA_SIZE)
+              {
+                break;
+              }
                 s_recvSize = epCbParam->length;
 
                 for( i=0; i<epCbParam->length; i++ )
