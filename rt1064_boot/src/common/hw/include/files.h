@@ -19,6 +19,21 @@ extern "C" {
 #ifdef _USE_HW_FILES
 
 
+#include <stdio.h>
+
+
+#define fopen     ob_fopen
+#define fclose    ob_fclose
+#define fread     ob_fread
+#define fwrite    ob_fwrite
+#define fgets     ob_fgets
+#define fseek     ob_fseek
+#define rewind    ob_frewind
+#define fgetc     ob_fgetc
+#define ftell     ob_ftell
+
+
+
 FILE  *ob_fopen(const char *filename, const char *mode);
 int    ob_fclose(FILE *stream);
 size_t ob_fread(void *ptr, size_t size, size_t count, FILE *stream);

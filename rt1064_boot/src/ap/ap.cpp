@@ -115,6 +115,57 @@ void bootCmdif(void)
       cmdifPrintf("firmware empty \n");
     }
   }
+  else if (cmdifGetParamCnt() == 2 && cmdifHasString("file", 0) == true)
+  {
+    char *file_name;
+
+    p_tag = (flash_tag_t *)SDRAM_ADDR_TAG;
+    file_name = (char *)cmdifGetParamStr(1);
+
+
+    cmdifPrintf("File Name    : %s \n", file_name);
+
+    FILE *f;
+    int  file_len;
+    int  read_len;
+    f = fopen(file_name, "rb");
+    if (f != NULL)
+    {
+      cmdifPrintf("fopen        : OK \n");
+
+      fseek(f, 0, SEEK_END);
+      file_len = ftell(f);
+      fseek(f, 0, SEEK_SET);
+
+      cmdifPrintf("file size    : %d KB\n", file_len/1024);
+
+      read_len = fread((void *)SDRAM_ADDR_TAG, 1, file_len, f);
+      if (read_len == file_len)
+      {
+        void (**jump_func)(void) = (void (**)(void))(p_tag->addr_fw + 4);
+
+        SCB_InvalidateDCache_by_Addr((void *)(p_tag->addr_fw), p_tag->load_size);
+
+        cmdifPrintf("fread        : OK\n");
+        cmdifPrintf("Jump Addr    : 0x%X \n", (int)(*jump_func));
+
+        delay(100);
+        bspDeInit();
+
+        __set_MSP(*(uint32_t *)p_tag->addr_fw);
+        (*jump_func)();
+      }
+      else
+      {
+        cmdifPrintf("fread        : fail\n");
+      }
+      fclose(f);
+    }
+    else
+    {
+      cmdifPrintf("fopen fail \n");
+    }
+  }
   else
   {
     ret = false;

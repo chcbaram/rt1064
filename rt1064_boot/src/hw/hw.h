@@ -27,7 +27,11 @@ extern "C" {
 #include "sdram.h"
 #include "gpio.h"
 #include "micros.h"
+#include "usbd.h"
+#include "sd.h"
+#include "files.h"
 
+#include "fatfs/fatfs.h"
 
 
 

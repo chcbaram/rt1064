@@ -36,6 +36,12 @@
 #define _USE_HW_GPIO
 #define      HW_GPIO_MAX_CH         4
 
+#define _USE_HW_FILES
+#define _USE_HW_FATFS
+#define _USE_HW_SD
+#define      HW_SD_PIN_DETECTED     0
+#define      HW_SD_PIN_PWREN        1
+
 
 #define _USE_HW_CMDIF
 #define      HW_CMDIF_LIST_MAX              32
@@ -56,6 +62,8 @@
 #define FLASH_ADDR_START              0x70080000
 #define FLASH_ADDR_END                (FLASH_ADDR_START + 2*1024*1024)
 
+#define SDRAM_ADDR_TAG                0x80200000
+#define SDRAM_ADDR_FW                 0x80200400
 
 
 #endif /* SRC_HW_HW_DEF_H_ */

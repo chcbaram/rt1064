@@ -13,7 +13,7 @@
 
 
 __attribute__((aligned(2048))) __attribute__((used, section(".tag"))) const uint8_t boot_name[32] = "RT1064_B/D";
-                               __attribute__((used, section(".tag"))) const uint8_t boot_ver[32]  = "B200224R1";
+                               __attribute__((used, section(".tag"))) const uint8_t boot_ver[32]  = "B200226R1";
 
 
 void hwInit(void)
@@ -42,5 +42,10 @@ void hwInit(void)
 
 
 
-  vcpInit();
+  if (sdInit() == true)
+  {
+    fatfsInit();
+  }
+
+  usbdInit();
 }
