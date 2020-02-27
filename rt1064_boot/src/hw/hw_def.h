@@ -18,6 +18,7 @@
 #define _USE_HW_CLOCKS
 #define _USE_HW_MICROS
 
+#define _USE_HW_RESET
 
 #define _USE_HW_LED
 #define      HW_LED_MAX_CH          1

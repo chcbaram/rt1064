@@ -57,6 +57,11 @@ bool cmdifInit(void)
   uint32_t i;
 
 
+  if (cmdif_cmd.index == true)
+  {
+    return true;
+  }
+
   cmdif_cmd.index    = 0;
   cmdif_cmd.err_code = 0;
   cmdif_cmd.init     = true;

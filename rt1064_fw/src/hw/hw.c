@@ -23,7 +23,7 @@ __attribute__((section(".tag"))) const flash_tag_t fw_tag =
     // fw info
     //
     0xAAAA5555,        // magic_number
-    "V200224R1",       // version_str
+    "V200227R1",       // version_str
     "RT1064_B/D",      // board_str
     "Firmware",        // name
     __DATE__,
@@ -47,6 +47,8 @@ void hwInit(void)
   microsInit();
   swtimerInit();
   cmdifInit();
+
+  resetInit();
   flashInit();
 
   ledInit();
@@ -59,6 +61,7 @@ void hwInit(void)
   logPrintf("Addr Fw    \t\t: 0x%X\r\n", (int)fw_tag.addr_fw);
   logPrintf("Addr Hw    \t\t: 0x%X\r\n", (int)hwInit);
 
+  resetLog();
   clocksInit();
 
   if (fw_tag.addr_fw == fw_tag.load_start)

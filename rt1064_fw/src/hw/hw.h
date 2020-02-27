@@ -30,6 +30,7 @@ extern "C" {
 #include "micros.h"
 #include "lcd.h"
 #include "usbd.h"
+#include "reset.h"
 
 
 #include "fatfs/fatfs.h"
