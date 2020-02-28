@@ -53,7 +53,7 @@ void apMain(void)
 
     while (uartAvailable(_DEF_UART2) > 0)
     {
-      uartPrintf(_DEF_UART2, "rx : 0x%X \n", uartRead(_DEF_UART2));
+      uartPrintf(_DEF_UART1, "rx : 0x%X \n", uartRead(_DEF_UART2));
     }
 
     osThreadYield();

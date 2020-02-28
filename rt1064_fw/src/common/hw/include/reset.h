@@ -20,6 +20,10 @@
 
 
 
+#define RESET_MODE_TO_BOOT    1
+#define RESET_MODE_TO_JUMP    0
+
+
 void resetInit(void);
 void resetLog(void);
 void resetClearFlag(void);

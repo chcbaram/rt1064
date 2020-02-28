@@ -23,6 +23,7 @@
 #include "usbd_cdc_interface.h"
 #include "usb_composite.h"
 
+#include "reset.h"
 
 
 #define APP_RX_DATA_SIZE  2048
@@ -135,6 +136,12 @@ volatile uint32_t txd_BufPtrOut = 0;
 
 
 
+#define USB_CDC_RESET_MODE_TO_BOOT      1
+#define USB_CDC_RESET_MODE_TO_JUMP      2
+
+
+volatile uint8_t  cdc_reset_mode = 0;
+volatile uint32_t cdc_reset_delay_cnt = 0;
 
 
 
@@ -159,6 +166,16 @@ void USB_SoF_IRQHandler(void)
   }
 
   CDC_Itf_TxISR();
+
+  if (cdc_reset_delay_cnt > 0)
+  {
+    cdc_reset_delay_cnt--;
+
+    if (cdc_reset_delay_cnt == 0)
+    {
+      resetRunSoftReset();
+    }
+  }
 }
 
 void CDC_Itf_TxISR(void)
@@ -241,6 +258,18 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
               {
                 break;
               }
+
+              if (cdc_reset_mode == USB_CDC_RESET_MODE_TO_BOOT)
+              {
+                resetSetBootMode(RESET_MODE_TO_BOOT);
+                cdc_reset_delay_cnt = 100;
+              }
+              if (cdc_reset_mode == USB_CDC_RESET_MODE_TO_JUMP)
+              {
+                resetSetBootMode(RESET_MODE_TO_JUMP);
+                cdc_reset_delay_cnt = 100;
+              }
+
 
                 s_recvSize = epCbParam->length;
 
@@ -338,7 +367,29 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
         {
             if (1 == acmReqParam->isSetup)
             {
-                *(acmReqParam->buffer) = s_lineCoding;
+              uint32_t baud;
+
+              *(acmReqParam->buffer) = s_lineCoding;
+
+              baud  = s_lineCoding[0];
+              baud |= s_lineCoding[1]<<8;
+              baud |= s_lineCoding[2]<<16;
+              baud |= s_lineCoding[3]<<24;
+
+
+              if (baud == 1200)
+              {
+                cdc_reset_mode = USB_CDC_RESET_MODE_TO_BOOT;
+              }
+              if (baud == 1201)
+              {
+                cdc_reset_mode = USB_CDC_RESET_MODE_TO_JUMP;
+              }
+
+              if (1 == g_deviceComposite->cdcVcom.attach)
+              {
+                g_deviceComposite->cdcVcom.startTransactions = 1;
+              }
             }
             else
             {

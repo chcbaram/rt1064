@@ -51,7 +51,7 @@ void hwInit(void)
     fatfsInit();
   }
 
-  if (resetGetBootMode() & (1<<0))
+  if (buttonGetPressed(0) != true && (resetGetBootMode() & (1<<0)) == 0)
   {
     flash_tag_t *p_tag = (flash_tag_t *)FLASH_ADDR_TAG;
     void (**jump_func)(void) = (void (**)(void))(p_tag->addr_fw + 4);
