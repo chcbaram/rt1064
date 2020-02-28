@@ -23,7 +23,7 @@ __attribute__((section(".tag"))) const flash_tag_t fw_tag =
     // fw info
     //
     0xAAAA5555,        // magic_number
-    "V200227R1",       // version_str
+    "V200229R1",       // version_str
     "RT1064_B/D",      // board_str
     "Firmware",        // name
     __DATE__,

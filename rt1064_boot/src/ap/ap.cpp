@@ -9,8 +9,11 @@
 
 
 #include "ap.h"
+#include "boot/boot.h"
 
 
+
+static cmd_t cmd_boot;
 
 void bootCmdif(void);
 
@@ -22,8 +25,27 @@ void apInit(void)
   cmdifOpen(_DEF_UART1, 57600);
   uartOpen(_DEF_UART2, 57600);
 
-
+  cmdInit(&cmd_boot);
+  cmdBegin(&cmd_boot, _DEF_UART2, 57600);
   cmdifAdd("boot", bootCmdif);
+
+
+  if (buttonGetPressed(0) != true && (resetGetBootMode() & (1<<0)) == 0)
+  {
+    resetSetBootMode(0);
+
+    if (bootVerifyCrc(FLASH_ADDR_TAG) != true)
+    {
+      logPrintf("fw crc    \t\t: Fail\r\n");
+      logPrintf("boot begin...\r\n");
+    }
+    else
+    {
+      bootJumpToFw(FLASH_ADDR_TAG);
+    }
+  }
+
+  usbdInit();
 }
 
 
@@ -42,9 +64,9 @@ void apMain(void)
 
     cmdifMain();
 
-    while (uartAvailable(_DEF_UART2) > 0)
+    if (cmdReceivePacket(&cmd_boot) == true)
     {
-      uartPrintf(_DEF_UART2, "rx : 0x%X \n", uartRead(_DEF_UART2));
+      bootProcessCmd(&cmd_boot);
     }
   }
 }

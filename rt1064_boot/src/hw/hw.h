@@ -31,6 +31,9 @@ extern "C" {
 #include "sd.h"
 #include "files.h"
 #include "reset.h"
+#include "cmd.h"
+#include "util.h"
+
 
 #include "fatfs/fatfs.h"
 

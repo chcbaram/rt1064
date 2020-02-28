@@ -338,6 +338,12 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
             if (1 == acmReqParam->isSetup)
             {
                 *(acmReqParam->buffer) = s_lineCoding;
+
+
+                if (1 == g_deviceComposite->cdcVcom.attach)
+                {
+                  g_deviceComposite->cdcVcom.startTransactions = 1;
+                }
             }
             else
             {
