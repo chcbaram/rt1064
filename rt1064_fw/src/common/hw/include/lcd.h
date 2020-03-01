@@ -9,6 +9,10 @@
 #define SRC_COMMON_HW_INCLUDE_LCD_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "hw_def.h"
 
 #ifdef _USE_HW_LCD
@@ -44,6 +48,9 @@ enum class_color {
 bool lcdInit(void);
 bool lcdIsInit(void);
 void lcdReset(void);
+
+bool lcdMutexWait(void);
+bool lcdMutexRelease(void);
 
 uint8_t lcdGetBackLight(void);
 void    lcdSetBackLight(uint8_t value);
@@ -83,5 +90,9 @@ uint32_t lcdGetStrWidth(const char *fmt, ...);
 #endif /* _USE_HW_LCD */
 
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SRC_COMMON_HW_INCLUDE_LCD_H_ */

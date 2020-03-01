@@ -9,7 +9,7 @@
 
 
 #include "ap.h"
-
+#include "LittlevGL/LittlevGL.h"
 
 
 static void threadEmul(void const *argument);
@@ -66,8 +66,12 @@ static void threadEmul(void const *argument)
   uint16_t y = 0;
 
 
+  LittlevGL();
+
   while(1)
   {
+    lcdMutexWait();
+
     if (lcdDrawAvailable() > 0)
     {
       lcdClearBuffer(black);
@@ -112,6 +116,9 @@ static void threadEmul(void const *argument)
 #endif
       lcdRequestDraw();
     }
+
+    lcdMutexRelease();
+
     osThreadYield();
   }
 }

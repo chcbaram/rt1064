@@ -46,6 +46,11 @@ static uint8_t pin_rst = 2;
 static uint8_t pin_bkl = 3;
 
 
+#ifdef _USE_HW_RTOS
+static osMutexId mutex_id;
+#endif
+
+
 void lcdFillBuffer(void * pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine, uint32_t ColorIndex);
 void lcdSwapFrameBuffer(void);
 void disHanFont(int x, int y, PHAN_FONT_OBJ *FontPtr, uint16_t textcolor);
@@ -80,6 +85,12 @@ bool lcdInit(void)
   {
     p_draw_frame_buf = frame_buffer[frame_index];
   }
+
+#ifdef _USE_HW_RTOS
+  osMutexDef(mutex_id);
+  mutex_id = osMutexCreate (osMutex(mutex_id));
+#endif
+
 
   lcdHwInit();
 
@@ -132,6 +143,24 @@ bool lcdIsInit(void)
 void lcdReset(void)
 {
 
+}
+
+
+bool lcdMutexWait(void)
+{
+#ifdef _USE_HW_RTOS
+  osMutexWait(mutex_id, osWaitForever);
+#endif
+
+  return true;
+}
+
+bool lcdMutexRelease(void)
+{
+#ifdef _USE_HW_RTOS
+  osMutexRelease(mutex_id);
+#endif
+  return true;
 }
 
 uint8_t lcdGetBackLight(void)
