@@ -328,6 +328,9 @@ void lcdDrawHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 
 void lcdDrawFillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 {
+  x = constrain(x, 0, HW_LCD_WIDTH-1);
+  y = constrain(y, 0, HW_LCD_HEIGHT-1);
+
   for (int16_t i=x; i<x+w; i++)
   {
     lcdDrawVLine(i, y, h, color);
@@ -371,6 +374,10 @@ void lcdPrintf(int x, int y, uint16_t color,  const char *fmt, ...)
   int Size_Char;
   int i, x_Pre = x;
   PHAN_FONT_OBJ FontBuf;
+
+
+  x = constrain(x, 0, HW_LCD_WIDTH-1);
+  y = constrain(y, 0, HW_LCD_HEIGHT-1);
 
 
   len = vsnprintf(print_buffer, 255, fmt, arg);

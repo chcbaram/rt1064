@@ -40,6 +40,7 @@ void apMain(void)
 {
   uint32_t pre_time;
 
+
   pre_time = millis();
   while(1)
   {
@@ -50,11 +51,6 @@ void apMain(void)
     }
 
     cmdifMain();
-
-    while (uartAvailable(_DEF_UART2) > 0)
-    {
-      uartPrintf(_DEF_UART1, "rx : 0x%X \n", uartRead(_DEF_UART2));
-    }
 
     osThreadYield();
   }
@@ -97,6 +93,23 @@ static void threadEmul(void const *argument)
       x %= lcdGetWidth();
       y %= lcdGetHeight();
 
+#if 1
+      uint8_t touch_cnt;
+      ft5406_data_t touch_data;;
+
+
+      touch_cnt = ft5406GetTouchedCount();
+      if ( touch_cnt> 0)
+      {
+        for (int i=0; i<touch_cnt; i++)
+        {
+          ft5406GetTouchedData(i, &touch_data);
+
+          lcdPrintf(touch_data.x-30, touch_data.y-30-16, white, "%d %d %d", touch_data.id, touch_data.x, touch_data.y);
+          lcdDrawFillRect(touch_data.x-30, touch_data.y-30, 60, 60, green);
+        }
+      }
+#endif
       lcdRequestDraw();
     }
     osThreadYield();

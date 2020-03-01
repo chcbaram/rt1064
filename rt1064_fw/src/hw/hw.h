@@ -32,6 +32,8 @@ extern "C" {
 #include "usbd.h"
 #include "reset.h"
 #include "i2c.h"
+#include "ft5406.h"
+
 
 #include "fatfs/fatfs.h"
 

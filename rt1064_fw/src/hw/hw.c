@@ -77,5 +77,7 @@ void hwInit(void)
   }
 
   lcdInit();
+  ft5406Init();
+
   usbdInit();
 }

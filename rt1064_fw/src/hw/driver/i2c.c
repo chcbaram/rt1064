@@ -136,17 +136,6 @@ bool i2cIsDeviceReady(uint8_t ch, uint8_t dev_addr)
     return false;
   }
 
-  /*
-  mode                 = 0;
-  xfer->slaveAddress   = FT5406_RT_I2C_ADDRESS;
-  xfer->direction      = kLPI2C_Write;
-  xfer->subaddress     = 0;
-  xfer->subaddressSize = 1;
-  xfer->data           = &mode;
-  xfer->dataSize       = 1;
-  xfer->flags          = kLPI2C_TransferDefaultFlag;
-  */
-
   i2c_ret = LPI2C_MasterStart(p_handle, dev_addr, kLPI2C_Write);
   delay(2);
   i2c_ret = LPI2C_MasterStop(p_handle);
