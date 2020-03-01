@@ -53,6 +53,7 @@ void hwInit(void)
 
   ledInit();
   buttonInit();
+  i2cInit();
   uartInit();
   uartOpen(_DEF_UART1, 57600);
 

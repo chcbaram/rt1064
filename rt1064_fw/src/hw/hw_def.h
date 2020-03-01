@@ -30,7 +30,7 @@
 #define _USE_HW_MICROS
 #define _USE_HW_RTOS
 #define _USE_HW_RESET
-
+#define _USE_HW_FT5406
 
 #define _USE_HW_LED
 #define      HW_LED_MAX_CH          1
@@ -48,6 +48,9 @@
 
 #define _USE_HW_GPIO
 #define      HW_GPIO_MAX_CH         4
+
+#define _USE_HW_I2C
+#define      HW_I2C_MAX_CH          1
 
 #define _USE_HW_FILES
 #define _USE_HW_FATFS

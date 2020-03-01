@@ -100,6 +100,7 @@ settings:
 - {id: CCM.LCDIF_PODF.scale, value: '2', locked: true}
 - {id: CCM.LCDIF_PRED.scale, value: '5', locked: true}
 - {id: CCM.LCDIF_PRE_CLK_SEL.sel, value: CCM_ANALOG.PLL5_MAIN_CLK}
+- {id: CCM.LPI2C_CLK_PODF.scale, value: '1', locked: true}
 - {id: CCM.PERCLK_PODF.scale, value: '2', locked: true}
 - {id: CCM.SEMC_PODF.scale, value: '4', locked: true}
 - {id: CCM.UART_CLK_PODF.scale, value: '1', locked: true}

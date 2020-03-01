@@ -30,6 +30,12 @@
 #define _DEF_UART3                  2
 #define _DEF_UART4                  3
 
+#define _DEF_I2C1                   0
+#define _DEF_I2C2                   1
+#define _DEF_I2C3                   2
+#define _DEF_I2C4                   3
+
+
 
 #define _DEF_HIGH                   1
 #define _DEF_LOW                    0

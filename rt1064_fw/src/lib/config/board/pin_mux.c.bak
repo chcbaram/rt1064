@@ -119,7 +119,7 @@ BOARD_InitPins:
   - {pin_num: D11, peripheral: LCDIF, signal: 'lcdif_data, 15', pin_signal: GPIO_B1_03, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull}
   - {pin_num: M11, peripheral: GPIO1, signal: 'gpio_io, 02', pin_signal: GPIO_AD_B0_02, direction: OUTPUT, gpio_init_state: 'true', hysteresis_enable: Enable, pull_up_down_config: Pull_Up_100K_Ohm,
     pull_keeper_select: Pull}
-  - {pin_num: B14, peripheral: GPIO2, signal: 'gpio_io, 31', pin_signal: GPIO_B1_15, direction: OUTPUT, gpio_init_state: 'true', hysteresis_enable: Enable, pull_up_down_config: Pull_Up_100K_Ohm,
+  - {pin_num: B14, peripheral: GPIO2, signal: 'gpio_io, 31', pin_signal: GPIO_B1_15, direction: OUTPUT, gpio_init_state: 'false', hysteresis_enable: Enable, pull_up_down_config: Pull_Up_100K_Ohm,
     pull_keeper_select: Pull}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
@@ -173,7 +173,7 @@ void BOARD_InitPins(void) {
   /* GPIO configuration on GPIO_B1_15 (pin B14) */
   gpio_pin_config_t gpio2_pinB14_config = {
       .direction = kGPIO_DigitalOutput,
-      .outputLogic = 1U,
+      .outputLogic = 0U,
       .interruptMode = kGPIO_NoIntmode
   };
   /* Initialize GPIO functionality on GPIO_B1_15 (pin B14) */

@@ -68,7 +68,7 @@ outputs:
 - {id: GPT1_ipg_clk_highfreq.outFreq, value: 75 MHz}
 - {id: GPT2_ipg_clk_highfreq.outFreq, value: 75 MHz}
 - {id: IPG_CLK_ROOT.outFreq, value: 150 MHz}
-- {id: LCDIF_CLK_ROOT.outFreq, value: 67.5 MHz}
+- {id: LCDIF_CLK_ROOT.outFreq, value: 9.3 MHz}
 - {id: LPI2C_CLK_ROOT.outFreq, value: 60 MHz}
 - {id: LPSPI_CLK_ROOT.outFreq, value: 132 MHz}
 - {id: LVDS1_CLK.outFreq, value: 1.2 GHz}
@@ -97,6 +97,9 @@ settings:
 - {id: CCM.FLEXSPI2_SEL.sel, value: CCM_ANALOG.PLL3_PFD0_CLK}
 - {id: CCM.FLEXSPI_PODF.scale, value: '3', locked: true}
 - {id: CCM.FLEXSPI_SEL.sel, value: CCM_ANALOG.PLL3_PFD0_CLK}
+- {id: CCM.LCDIF_PODF.scale, value: '2', locked: true}
+- {id: CCM.LCDIF_PRED.scale, value: '5', locked: true}
+- {id: CCM.LCDIF_PRE_CLK_SEL.sel, value: CCM_ANALOG.PLL5_MAIN_CLK}
 - {id: CCM.PERCLK_PODF.scale, value: '2', locked: true}
 - {id: CCM.SEMC_PODF.scale, value: '4', locked: true}
 - {id: CCM.UART_CLK_PODF.scale, value: '1', locked: true}
@@ -119,9 +122,16 @@ settings:
 - {id: CCM_ANALOG.PLL3_PFD1_BYPASS.sel, value: CCM_ANALOG.PLL3_PFD1}
 - {id: CCM_ANALOG.PLL3_PFD2_BYPASS.sel, value: CCM_ANALOG.PLL3_PFD2}
 - {id: CCM_ANALOG.PLL3_PFD3_BYPASS.sel, value: CCM_ANALOG.PLL3_PFD3}
+- {id: CCM_ANALOG.PLL5.denom, value: '1'}
+- {id: CCM_ANALOG.PLL5.div, value: '31', locked: true}
+- {id: CCM_ANALOG.PLL5.num, value: '0'}
+- {id: CCM_ANALOG.PLL5_BYPASS.sel, value: CCM_ANALOG.PLL5_POST_DIV}
+- {id: CCM_ANALOG.PLL5_POST_DIV.scale, value: '2', locked: true}
+- {id: CCM_ANALOG.VIDEO_DIV.scale, value: '4', locked: true}
 - {id: CCM_ANALOG_PLL_USB1_EN_USB_CLKS_CFG, value: Enabled}
 - {id: CCM_ANALOG_PLL_USB1_EN_USB_CLKS_OUT_CFG, value: Enabled}
 - {id: CCM_ANALOG_PLL_USB1_POWER_CFG, value: 'Yes'}
+- {id: CCM_ANALOG_PLL_VIDEO_POWERDOWN_CFG, value: 'No'}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 /*******************************************************************************
@@ -142,6 +152,14 @@ const clock_sys_pll_config_t sysPllConfig_BOARD_BootClockRUN =
 const clock_usb_pll_config_t usb1PllConfig_BOARD_BootClockRUN =
     {
         .loopDivider = 0,                         /* PLL loop divider, Fout = Fin * 20 */
+        .src = 0,                                 /* Bypass clock source, 0 - OSC 24M, 1 - CLK1_P and CLK1_N */
+    };
+const clock_video_pll_config_t videoPllConfig_BOARD_BootClockRUN =
+    {
+        .loopDivider = 31,                        /* PLL loop divider, Fout = Fin * ( loopDivider + numerator / denominator ) */
+        .postDivider = 8,                         /* Divider after PLL */
+        .numerator = 0,                           /* 30 bit numerator of fractional loop divider, Fout = Fin * ( loopDivider + numerator / denominator ) */
+        .denominator = 1,                         /* 30 bit denominator of fractional loop divider, Fout = Fin * ( loopDivider + numerator / denominator ) */
         .src = 0,                                 /* Bypass clock source, 0 - OSC 24M, 1 - CLK1_P and CLK1_N */
     };
 const clock_enet_pll_config_t enetPllConfig_BOARD_BootClockRUN =
@@ -325,11 +343,11 @@ void BOARD_BootClockRUN(void)
     /* Disable LCDIF clock gate. */
     CLOCK_DisableClock(kCLOCK_LcdPixel);
     /* Set LCDIF_PRED. */
-    CLOCK_SetDiv(kCLOCK_LcdifPreDiv, 1);
+    CLOCK_SetDiv(kCLOCK_LcdifPreDiv, 4);
     /* Set LCDIF_CLK_PODF. */
-    CLOCK_SetDiv(kCLOCK_LcdifDiv, 3);
+    CLOCK_SetDiv(kCLOCK_LcdifDiv, 1);
     /* Set Lcdif pre clock source. */
-    CLOCK_SetMux(kCLOCK_LcdifPreMux, 5);
+    CLOCK_SetMux(kCLOCK_LcdifPreMux, 2);
     /* Disable SPDIF clock gate. */
     CLOCK_DisableClock(kCLOCK_Spdif);
     /* Set SPDIF0_CLK_PRED. */
@@ -400,14 +418,25 @@ void BOARD_BootClockRUN(void)
     CCM_ANALOG->MISC2 &= ~CCM_ANALOG_MISC2_AUDIO_DIV_MSB_MASK;
     /* Enable Audio PLL output. */
     CCM_ANALOG->PLL_AUDIO |= CCM_ANALOG_PLL_AUDIO_ENABLE_MASK;
-    /* DeInit Video PLL. */
-    CLOCK_DeinitVideoPll();
-    /* Bypass Video PLL. */
-    CCM_ANALOG->PLL_VIDEO |= CCM_ANALOG_PLL_VIDEO_BYPASS_MASK;
-    /* Set divider for Video PLL. */
-    CCM_ANALOG->MISC2 = (CCM_ANALOG->MISC2 & (~CCM_ANALOG_MISC2_VIDEO_DIV_MASK)) | CCM_ANALOG_MISC2_VIDEO_DIV(0);
-    /* Enable Video PLL output. */
-    CCM_ANALOG->PLL_VIDEO |= CCM_ANALOG_PLL_VIDEO_ENABLE_MASK;
+    /* Init Video PLL. */
+    uint32_t pllVideo;
+    /* Disable Video PLL output before initial Video PLL. */
+    CCM_ANALOG->PLL_VIDEO &= ~CCM_ANALOG_PLL_VIDEO_ENABLE_MASK;
+    /* Bypass PLL first */
+    CCM_ANALOG->PLL_VIDEO = (CCM_ANALOG->PLL_VIDEO & (~CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC_MASK)) |
+                            CCM_ANALOG_PLL_VIDEO_BYPASS_MASK | CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC(0);
+    CCM_ANALOG->PLL_VIDEO_NUM = CCM_ANALOG_PLL_VIDEO_NUM_A(0);
+    CCM_ANALOG->PLL_VIDEO_DENOM = CCM_ANALOG_PLL_VIDEO_DENOM_B(1);
+    pllVideo = (CCM_ANALOG->PLL_VIDEO & (~(CCM_ANALOG_PLL_VIDEO_DIV_SELECT_MASK | CCM_ANALOG_PLL_VIDEO_POWERDOWN_MASK))) |
+               CCM_ANALOG_PLL_VIDEO_ENABLE_MASK |CCM_ANALOG_PLL_VIDEO_DIV_SELECT(31);
+    pllVideo |= CCM_ANALOG_PLL_VIDEO_POST_DIV_SELECT(1);
+    CCM_ANALOG->MISC2 = (CCM_ANALOG->MISC2 & (~CCM_ANALOG_MISC2_VIDEO_DIV_MASK)) | CCM_ANALOG_MISC2_VIDEO_DIV(3);
+    CCM_ANALOG->PLL_VIDEO = pllVideo;
+    while ((CCM_ANALOG->PLL_VIDEO & CCM_ANALOG_PLL_VIDEO_LOCK_MASK) == 0)
+    {
+    }
+    /* Disable bypass for Video PLL. */
+    CLOCK_SetPllBypass(CCM_ANALOG, kCLOCK_PllVideo, 0);
     /* Init Enet PLL. */
     CLOCK_InitEnetPll(&enetPllConfig_BOARD_BootClockRUN);
     /* Bypass Enet PLL. */
